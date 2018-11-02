@@ -12,22 +12,16 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
-import org.openqa.selenium.remote.RemoteWebDriver;
-
-import scrapingforlife.configuration.DriverFactory;
-
 public class TestThread {
 
 	public static void main(String args[]) {
-		final DriverFactory driverFactory = new DriverFactory();
-		final RemoteWebDriver webDriver = driverFactory.getDriver();
 		final SearchModel searchModel = buildSearchModel();
 		final List<Path> peakListPaths = buildPeakListPaths(searchModel.getPeakListFolderPath());
 		
-		final ExecutorService service = Executors.newFixedThreadPool(1);
+		final ExecutorService service = Executors.newFixedThreadPool(2);
 		
 		IntStream.range(0, peakListPaths.size())
-			.forEach(i -> service.submit(new TestScrap(webDriver, searchModel, peakListPaths.get(i))));
+			.forEach(i -> service.submit(new TestScrap(searchModel, peakListPaths.get(i))));
 		service.shutdown();
 	}
 

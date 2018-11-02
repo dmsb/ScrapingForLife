@@ -26,6 +26,7 @@ public class DriverFactory {
     private DriverType selectedDriverType;
     
     public DriverFactory() {
+        
         DriverType driverType = OPERA;
         String browser = System.getProperty("browser", driverType.toString()).toUpperCase();
         try {
@@ -35,7 +36,15 @@ public class DriverFactory {
         } catch (NullPointerException ignored) {
             System.err.println("No driver specified, defaulting to '" + driverType + "'...");
         }
+        
         selectedDriverType = driverType;
+        
+        System.out.println(" ");
+        System.out.println("Local Operating System: " + operatingSystem);
+        System.out.println("Local Architecture: " + systemArchitecture);
+        System.out.println("Selected Browser: " + selectedDriverType);
+        System.out.println("Connecting to Selenium Grid: " + useRemoteWebDriver);
+        System.out.println(" ");
     }
 
     public RemoteWebDriver getDriver() {
@@ -62,13 +71,6 @@ public class DriverFactory {
     }
 
     private void instantiateWebDriver(DriverType driverType) throws MalformedURLException {
-        //TODO add in a real logger instead of System.out
-        System.out.println(" ");
-        System.out.println("Local Operating System: " + operatingSystem);
-        System.out.println("Local Architecture: " + systemArchitecture);
-        System.out.println("Selected Browser: " + selectedDriverType);
-        System.out.println("Connecting to Selenium Grid: " + useRemoteWebDriver);
-        System.out.println(" ");
 
         DesiredCapabilities desiredCapabilities = new DesiredCapabilities();
 

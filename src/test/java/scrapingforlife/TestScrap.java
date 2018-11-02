@@ -15,31 +15,35 @@ import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.Select;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
+import scrapingforlife.configuration.DriverFactory;
+
 public class TestScrap implements Runnable {
 
 	private SearchModel searchModel;
 	private Path peakListPath;
+	private DriverFactory driverFactory;
 	private String[][] peptideCombinations = {
 			{"Da", "1.2"},
-//			{"Da", "1.0"},
-//			{"Da", "0.8"},
-//			{"Da", "0.6"},
-//			{"Da", "0.4"},
-//			{"Da", "0.2"},
-//			{"ppm", "100"},
+			{"Da", "1.0"},
+			{"Da", "0.8"},
+			{"Da", "0.6"},
+			{"Da", "0.4"},
+			{"Da", "0.2"},
+			{"ppm", "100"},
 			{"ppm", "200"}
 	};
-	private RemoteWebDriver webDriver;
+	
 
-	public TestScrap(RemoteWebDriver webDriver, SearchModel searchModel, Path peakListPath) {
+	public TestScrap(SearchModel searchModel, Path peakListPath) {
+		this.driverFactory =  new DriverFactory();
 		this.searchModel = searchModel;
 		this.peakListPath = peakListPath;
-		this.webDriver = webDriver;
 	}
 
 	@Override
 	public void run() {
-		
+        
+        final RemoteWebDriver webDriver = driverFactory.getDriver();
 		for(int i = 0; i < this.peptideCombinations.length; i++) {
 			
 			webDriver.get("http://www.matrixscience.com/cgi/search_form.pl?FORMVER=2&SEARCH=PMF");
