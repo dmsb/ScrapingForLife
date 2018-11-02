@@ -10,8 +10,7 @@ import java.util.stream.Collectors;
 import org.openqa.selenium.By;
 import org.openqa.selenium.Keys;
 import org.openqa.selenium.WebElement;
-import org.openqa.selenium.opera.OperaDriver;
-import org.openqa.selenium.opera.OperaOptions;
+import org.openqa.selenium.remote.RemoteWebDriver;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.Select;
 import org.openqa.selenium.support.ui.WebDriverWait;
@@ -30,39 +29,35 @@ public class TestScrap implements Runnable {
 //			{"ppm", "100"},
 			{"ppm", "200"}
 	};
+	private RemoteWebDriver webDriver;
 
-	public TestScrap(SearchModel searchModel, Path peakListPath) {
+	public TestScrap(RemoteWebDriver webDriver, SearchModel searchModel, Path peakListPath) {
 		this.searchModel = searchModel;
 		this.peakListPath = peakListPath;
+		this.webDriver = webDriver;
 	}
 
 	@Override
 	public void run() {
 		
-		System.setProperty("webdriver.opera.driver", "F:\\operadriver_win64\\operadriver.exe");
-
-		// Create a new instance of the Opera driver
-		final OperaOptions options = new OperaOptions();
-		options.setBinary("C:\\Program Files\\Opera\\56.0.3051.36\\opera.exe");
-		
-		final OperaDriver driver = new OperaDriver(options);
 		for(int i = 0; i < this.peptideCombinations.length; i++) {
 			
-			driver.get("http://www.matrixscience.com/cgi/search_form.pl?FORMVER=2&SEARCH=PMF");
-			completeQueryParameters(driver, i);
+			webDriver.get("http://www.matrixscience.com/cgi/search_form.pl?FORMVER=2&SEARCH=PMF");
+			completeQueryParameters(webDriver, i);
 			
 			// Waiting 10 seconds to get result page correctly instead processing page
-			WebDriverWait wait = new WebDriverWait(driver, 10);
+			WebDriverWait wait = new WebDriverWait(webDriver, 10);
 			wait.until(ExpectedConditions.urlContains("http://www.matrixscience.com/cgi/master_results.pl"));
 			
 			// Getting fields to be save	    
-			writeResults(driver, i);
-			driver.manage().deleteAllCookies();
+			writeResults(webDriver, i);
+			webDriver.manage().deleteAllCookies();
 		}
-		driver.quit();
+		
+		webDriver.quit();
 	}
 
-	private void writeResults(final OperaDriver driver, final Integer i) {
+	private void writeResults(final RemoteWebDriver driver, final Integer i) {
 		final List<WebElement> resultHeader = driver.findElementsByXPath("/html/body/font[1]/pre//b");
 		
 		try (BufferedWriter writer = new BufferedWriter(new FileWriter(this.searchModel.getPeakListResultPath() + 
@@ -82,7 +77,7 @@ public class TestScrap implements Runnable {
 		
 	}
 
-	private void completeQueryParameters(final OperaDriver driver, int i) {
+	private void completeQueryParameters(final RemoteWebDriver driver, int i) {
 		final Select dataBaseSelect = new Select(driver.findElement(By.name("DB")));
 		dataBaseSelect.selectByValue(searchModel.getDatabase());
 		dataBaseSelect.deselectByValue("contaminants");
@@ -109,7 +104,7 @@ public class TestScrap implements Runnable {
 		driver.findElement(By.id("Start_Search_Button")).submit();
 	}
 
-	private void buildProteinDetails(final OperaDriver driver, final BufferedWriter writer) {
+	private void buildProteinDetails(final RemoteWebDriver driver, final BufferedWriter writer) {
 		final List<WebElement> resultProteinIds = driver.findElementsByXPath("/html/body/form[2]/table/tbody/tr[1]/td[2]/tt/a");
 		final List<String> proteinDetailsUrls = resultProteinIds.stream()
 				.map(element -> {return element.getAttribute("href");}).collect(Collectors.toList());
