@@ -89,11 +89,9 @@ public enum DriverType implements DriverSetup {
         	if(System.getProperty("webdriver.opera.driver") == null) {
     			System.setProperty("webdriver.opera.driver", "F:\\operadriver_win64\\operadriver.exe");
     		}
-        	
             final OperaOptions options = new OperaOptions();
             options.setBinary("C:\\Program Files\\Opera\\56.0.3051.36\\opera.exe");
             options.merge(capabilities);
-
             return new OperaDriver(options);
         }
     };

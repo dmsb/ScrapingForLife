@@ -25,12 +25,12 @@ public class TestScrap implements Runnable {
 	private String[][] peptideCombinations = {
 			{"Da", "1.2"},
 			{"Da", "1.0"},
-			{"Da", "0.8"},
-			{"Da", "0.6"},
-			{"Da", "0.4"},
-			{"Da", "0.2"},
-			{"ppm", "100"},
-			{"ppm", "200"}
+//			{"Da", "0.8"},
+//			{"Da", "0.6"},
+//			{"Da", "0.4"},
+//			{"Da", "0.2"},
+//			{"ppm", "100"},
+//			{"ppm", "200"}
 	};
 	
 
@@ -44,6 +44,7 @@ public class TestScrap implements Runnable {
 	public void run() {
         
         final RemoteWebDriver webDriver = driverFactory.getDriver();
+    	
 		for(int i = 0; i < this.peptideCombinations.length; i++) {
 			
 			webDriver.get("http://www.matrixscience.com/cgi/search_form.pl?FORMVER=2&SEARCH=PMF");
