@@ -25,12 +25,12 @@ public class TestScrap implements Runnable {
 	private String[][] peptideCombinations = {
 			{"Da", "1.2"},
 			{"Da", "1.0"},
-//			{"Da", "0.8"},
-//			{"Da", "0.6"},
-//			{"Da", "0.4"},
-//			{"Da", "0.2"},
-//			{"ppm", "100"},
-//			{"ppm", "200"}
+			{"Da", "0.8"},
+			{"Da", "0.6"},
+			{"Da", "0.4"},
+			{"Da", "0.2"},
+			{"ppm", "100"},
+			{"ppm", "200"}
 	};
 	
 
@@ -44,7 +44,7 @@ public class TestScrap implements Runnable {
 	public void run() {
         
         final RemoteWebDriver webDriver = driverFactory.getDriver();
-    	
+        
 		for(int i = 0; i < this.peptideCombinations.length; i++) {
 			
 			webDriver.get("http://www.matrixscience.com/cgi/search_form.pl?FORMVER=2&SEARCH=PMF");
@@ -64,6 +64,8 @@ public class TestScrap implements Runnable {
 
 	private void writeResults(final RemoteWebDriver driver, final Integer i) {
 		final List<WebElement> resultHeader = driver.findElementsByXPath("/html/body/font[1]/pre//b");
+		final Object mascotScoreHistogramDetail1 = driver.executeScript("return document.querySelector(\"body > h3:nth-child(3)\", document, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null).nextSibling.nodeValue");
+		final Object mascotScoreHistogramDetail2 = driver.executeScript("return document.querySelector(\"body > br:nth-child(4)\", document, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null).nextSibling.nodeValue");
 		
 		try (BufferedWriter writer = new BufferedWriter(new FileWriter(this.searchModel.getPeakListResultPath() + 
 				this.peakListPath.getFileName().toString() + 
@@ -74,6 +76,10 @@ public class TestScrap implements Runnable {
 				writer.write(header.getText());
 				writer.newLine();
 			}
+			writer.write((String) mascotScoreHistogramDetail1);
+			writer.newLine();
+			writer.write((String) mascotScoreHistogramDetail2);
+			writer.newLine();
 			writer.newLine();
 			buildProteinDetails(driver, writer);
 		} catch (IOException e) {
